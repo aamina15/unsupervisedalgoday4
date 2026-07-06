@@ -224,9 +224,31 @@ st.pyplot(fig)
 # Cluster Summary
 # -----------------------------
 
-st.subheader("Cluster Summary")
+# -----------------------------
+# Cluster Summary
+# -----------------------------
 
-st.dataframe(df.groupby("Cluster").mean())
+st.subheader("📊 Cluster Summary")
+
+cluster_summary = df.groupby("Cluster").agg(
+    Average_Age=("Age", "mean"),
+    Average_Income=("Income($)", "mean"),
+    Customers=("Cluster", "count")
+)
+
+st.dataframe(cluster_summary)
+
+# -----------------------------
+# Customers in Each Cluster
+# -----------------------------
+
+st.subheader("👥 Customers in Each Cluster")
+
+for i in range(n_clusters):
+    with st.expander(f"Cluster {i+1}"):
+        st.dataframe(
+            df[df["Cluster"] == i][["Name", "Age", "Income($)"]]
+        )
 
 # -----------------------------
 # Project Description
