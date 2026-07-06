@@ -52,7 +52,7 @@ st.sidebar.title("👩‍💻 Developer")
 
 st.sidebar.write("**Aamina Hasan**")
 st.sidebar.write("Computer Science Engineering")
-st.sidebar.write("Room No. 612")
+
 
 st.sidebar.markdown("---")
 
