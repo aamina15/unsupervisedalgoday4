@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import MinMaxScaler
 
-# -----------------------------------
+# -----------------------------
 # Page Configuration
-# -----------------------------------
+# -----------------------------
 
 st.set_page_config(
     page_title="Customer Segmentation",
@@ -15,137 +15,118 @@ st.set_page_config(
     layout="centered"
 )
 
-# -----------------------------------
-# Custom CSS
-# -----------------------------------
+# -----------------------------
+# Simple CSS
+# -----------------------------
 
 st.markdown("""
 <style>
-
-/* Background */
 .stApp{
-    background-color:#f5f7fa;
+    background-color:#F7F9FC;
 }
 
-/* Main title */
 h1{
-    color:#0F4C81;
+    color:#1F4E79;
     text-align:center;
-    font-weight:bold;
 }
 
-/* Sub headings */
-h2,h3{
-    color:#0F4C81;
-}
-
-/* Buttons */
 div.stButton > button{
-    background-color:#0F4C81;
+    background:#1F77B4;
     color:white;
-    border-radius:10px;
+    border-radius:8px;
     border:none;
-    font-size:16px;
-    font-weight:bold;
-    padding:10px 18px;
 }
 
 div.stButton > button:hover{
-    background-color:#155A8A;
+    background:#145A86;
+    color:white;
 }
-
-/* Cards */
-.info-box{
-    background:white;
-    padding:18px;
-    border-radius:12px;
-    border-left:6px solid #0F4C81;
-    box-shadow:0px 2px 8px rgba(0,0,0,0.08);
-    margin-bottom:20px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------------
-# Title
-# -----------------------------------
+# -----------------------------
+# Sidebar
+# -----------------------------
 
-st.title("📊 Customer Segmentation using K-Means Clustering")
+st.sidebar.title("👩‍💻 Developer")
 
-st.markdown("""
-<div class="info-box">
+st.sidebar.write("**Aamina Hasan**")
+st.sidebar.write("Computer Science Engineering")
+st.sidebar.write("Room No. 612")
 
-### 👩‍💻 Student Details
+st.sidebar.markdown("---")
 
-**Name:** Aamina Hasan
+st.sidebar.markdown(
+"""
+**LinkedIn**
 
-**Branch:** Computer Science Engineering (CSE)
-
-**Room No.:** 612
-
-</div>
-""", unsafe_allow_html=True)
-
-st.write(
-    "This project groups customers into clusters based on their **Age** and **Income** using the K-Means Clustering algorithm."
+https://www.linkedin.com/in/aamina-hasan-50a6a930b/
+"""
 )
 
-# -----------------------------------
+# -----------------------------
+# Title
+# -----------------------------
+
+st.title("📊 Customer Segmentation using K-Means")
+
+st.write(
+    "Group customers based on **Age** and **Income** using the K-Means Clustering algorithm."
+)
+
+# -----------------------------
 # Load Dataset
-# -----------------------------------
+# -----------------------------
 
 df = pd.read_csv("income.csv")
 
-# Keep original copy for first graph
 original_df = df.copy()
 
 with st.expander("📄 View Dataset"):
     st.dataframe(df)
 
-# -----------------------------------
-# Original Scatter Plot
-# -----------------------------------
+st.write(f"Rows: **{df.shape[0]}** | Columns: **{df.shape[1]}**")
 
-st.subheader("📈 Original Customer Distribution")
+# -----------------------------
+# Original Graph
+# -----------------------------
 
-fig, ax = plt.subplots(figsize=(6,4))
+st.subheader("Original Data")
+
+fig, ax = plt.subplots()
 
 ax.scatter(original_df["Age"], original_df["Income($)"])
 
 ax.set_xlabel("Age")
 ax.set_ylabel("Income ($)")
-ax.set_title("Age vs Income")
 
 st.pyplot(fig)
 
-# -----------------------------------
-# Feature Scaling
-# -----------------------------------
+# -----------------------------
+# Scaling
+# -----------------------------
 
 scaler = MinMaxScaler()
 
 df["Age"] = scaler.fit_transform(df[["Age"]])
 df["Income($)"] = scaler.fit_transform(df[["Income($)"]])
 
-# -----------------------------------
-# Cluster Selection
-# -----------------------------------
+# -----------------------------
+# Select Clusters
+# -----------------------------
 
-st.subheader("⚙️ Choose Number of Clusters")
-
-st.info("Move the slider to change the number of clusters.")
+st.subheader("Choose Number of Clusters")
 
 n_clusters = st.slider(
-    "Number of Clusters",
-    min_value=2,
-    max_value=10,
-    value=3
+    "Clusters",
+    2,
+    10,
+    3
 )
 
-# -----------------------------------
-# Train KMeans
-# -----------------------------------
+# -----------------------------
+# KMeans
+# -----------------------------
 
 km = KMeans(
     n_clusters=n_clusters,
@@ -154,22 +135,20 @@ km = KMeans(
 
 df["Cluster"] = km.fit_predict(df[["Age","Income($)"]])
 
-st.success(f"Successfully created **{n_clusters}** clusters.")
+st.success(f"{n_clusters} clusters created successfully.")
 
-# -----------------------------------
-# Clustered Dataset
-# -----------------------------------
+# -----------------------------
+# Cluster Dataset
+# -----------------------------
 
-with st.expander("📄 View Clustered Dataset"):
+with st.expander("📄 Clustered Dataset"):
     st.dataframe(df)
 
-# -----------------------------------
+# -----------------------------
 # Cluster Plot
-# -----------------------------------
+# -----------------------------
 
-st.subheader("🎯 Cluster Visualization")
-
-fig, ax = plt.subplots(figsize=(6,5))
+st.subheader("Cluster Visualization")
 
 colors = [
     "red",
@@ -183,6 +162,8 @@ colors = [
     "olive",
     "cyan"
 ]
+
+fig, ax = plt.subplots()
 
 for i in range(n_clusters):
 
@@ -198,9 +179,9 @@ for i in range(n_clusters):
 ax.scatter(
     km.cluster_centers_[:,0],
     km.cluster_centers_[:,1],
-    marker="*",
     color="black",
-    s=250,
+    marker="*",
+    s=200,
     label="Centroids"
 )
 
@@ -211,11 +192,11 @@ ax.legend()
 
 st.pyplot(fig)
 
-# -----------------------------------
+# -----------------------------
 # Elbow Method
-# -----------------------------------
+# -----------------------------
 
-st.subheader("📉 Elbow Method")
+st.subheader("Elbow Method")
 
 sse = []
 
@@ -230,19 +211,56 @@ for k in range(1,11):
 
     sse.append(model.inertia_)
 
-fig, ax = plt.subplots(figsize=(6,4))
+fig, ax = plt.subplots()
 
 ax.plot(range(1,11), sse, marker="o")
 
-ax.set_xlabel("Number of Clusters (K)")
+ax.set_xlabel("K")
 ax.set_ylabel("SSE")
-ax.set_title("Elbow Method")
 
 st.pyplot(fig)
 
-# -----------------------------------
-# Footer
-# -----------------------------------
+# -----------------------------
+# Cluster Summary
+# -----------------------------
+
+st.subheader("Cluster Summary")
+
+st.dataframe(df.groupby("Cluster").mean())
+
+# -----------------------------
+# Project Description
+# -----------------------------
 
 st.markdown("---")
-st.caption("Machine Learning Project | K-Means Clustering | Aamina Hasan")
+
+st.subheader("Project Description")
+
+st.write(
+"""
+This project uses the **K-Means Clustering** algorithm to group customers
+based on their **Age** and **Income**. Data is first normalized using
+**MinMaxScaler**, and users can interactively choose the number of clusters.
+The Elbow Method helps identify an appropriate value of K.
+"""
+)
+
+st.subheader("Technologies Used")
+
+st.write("""
+- Python
+- Streamlit
+- Pandas
+- Matplotlib
+- Scikit-learn
+""")
+
+st.markdown("---")
+
+st.markdown(
+"""
+**Developed by:** Aamina Hasan
+
+🔗 LinkedIn: https://www.linkedin.com/in/aamina-hasan-50a6a930b/
+"""
+)
